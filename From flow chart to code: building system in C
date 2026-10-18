@@ -1,0 +1,294 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 100
+
+struct Student {
+    int id;
+    char name[50];
+    int age;
+    char course[30];
+    float grade1, grade2, grade3;
+};
+
+struct Student students[MAX];
+int count = 0;
+
+float calculateAverage(float g1, float g2, float g3) {
+    return (g1 + g2 + g3) / 3.0f;
+}
+
+int findStudent(int id) {
+    int i;
+
+    for (i = 0; i < count; i++) {
+        if (students[i].id == id) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+void addStudent(void) {
+    struct Student s;
+
+    if (count >= MAX) {
+        printf("\nStudent list is full!\n");
+        return;
+    }
+
+    printf("\nEnter Student ID: ");
+    if (scanf("%d", &s.id) != 1) {
+        printf("Invalid ID!\n");
+        return;
+    }
+
+    if (findStudent(s.id) != -1) {
+        printf("Student ID already exists!\n");
+        return;
+    }
+
+    printf("Enter Full Name: ");
+    scanf(" %49[^\n]", s.name);
+
+    printf("Enter Age: ");
+    if (scanf("%d", &s.age) != 1 || s.age <= 0) {
+        printf("Invalid age!\n");
+        return;
+    }
+
+    printf("Enter Course: ");
+    scanf(" %29[^\n]", s.course);
+
+    printf("Enter Grade 1 (0-100): ");
+    if (scanf("%f", &s.grade1) != 1 ||
+        s.grade1 < 0 || s.grade1 > 100) {
+        printf("Invalid grade!\n");
+        return;
+    }
+
+    printf("Enter Grade 2 (0-100): ");
+    if (scanf("%f", &s.grade2) != 1 ||
+        s.grade2 < 0 || s.grade2 > 100) {
+        printf("Invalid grade!\n");
+        return;
+    }
+
+    printf("Enter Grade 3 (0-100): ");
+    if (scanf("%f", &s.grade3) != 1 ||
+        s.grade3 < 0 || s.grade3 > 100) {
+        printf("Invalid grade!\n");
+        return;
+    }
+
+    students[count] = s;
+    count++;
+
+    printf("\nStudent added successfully!\n");
+    printf("Average Grade: %.2f\n",
+           calculateAverage(s.grade1, s.grade2, s.grade3));
+}
+
+void displayStudents(void) {
+    int i;
+    float average;
+
+    if (count == 0) {
+        printf("\nNo student records found!\n");
+        return;
+    }
+
+    printf("\n========== STUDENT RECORDS ==========\n");
+
+    for (i = 0; i < count; i++) {
+        average = calculateAverage(
+            students[i].grade1,
+            students[i].grade2,
+            students[i].grade3
+        );
+
+        printf("\nStudent ID: %d\n", students[i].id);
+        printf("Name: %s\n", students[i].name);
+        printf("Age: %d\n", students[i].age);
+        printf("Course: %s\n", students[i].course);
+        printf("Grade 1: %.2f\n", students[i].grade1);
+        printf("Grade 2: %.2f\n", students[i].grade2);
+        printf("Grade 3: %.2f\n", students[i].grade3);
+        printf("Average: %.2f\n", average);
+
+        if (average >= 75) {
+            printf("Remark: PASSED\n");
+        } else {
+            printf("Remark: FAILED\n");
+        }
+    }
+}
+
+void searchStudentRecord(void) {
+    int id, index;
+
+    printf("\nEnter Student ID to search: ");
+
+    if (scanf("%d", &id) != 1) {
+        printf("Invalid ID!\n");
+        return;
+    }
+
+    index = findStudent(id);
+
+    if (index == -1) {
+        printf("Student not found!\n");
+    } else {
+        printf("\nStudent Found!\n");
+        printf("ID: %d\n", students[index].id);
+        printf("Name: %s\n", students[index].name);
+        printf("Age: %d\n", students[index].age);
+        printf("Course: %s\n", students[index].course);
+        printf("Average: %.2f\n",
+               calculateAverage(
+                   students[index].grade1,
+                   students[index].grade2,
+                   students[index].grade3
+               ));
+    }
+}
+
+void updateStudent(void) {
+    int id, index;
+    struct Student s;
+
+    printf("\nEnter Student ID to update: ");
+
+    if (scanf("%d", &id) != 1) {
+        printf("Invalid ID!\n");
+        return;
+    }
+
+    index = findStudent(id);
+
+    if (index == -1) {
+        printf("Student not found!\n");
+        return;
+    }
+
+    s = students[index];
+
+    printf("Enter New Name: ");
+    scanf(" %49[^\n]", s.name);
+
+    printf("Enter New Age: ");
+    if (scanf("%d", &s.age) != 1 || s.age <= 0) {
+        printf("Invalid age!\n");
+        return;
+    }
+
+    printf("Enter New Course: ");
+    scanf(" %29[^\n]", s.course);
+
+    printf("Enter New Grade 1 (0-100): ");
+    if (scanf("%f", &s.grade1) != 1 ||
+        s.grade1 < 0 || s.grade1 > 100) {
+        printf("Invalid grade!\n");
+        return;
+    }
+
+    printf("Enter New Grade 2 (0-100): ");
+    if (scanf("%f", &s.grade2) != 1 ||
+        s.grade2 < 0 || s.grade2 > 100) {
+        printf("Invalid grade!\n");
+        return;
+    }
+
+    printf("Enter New Grade 3 (0-100): ");
+    if (scanf("%f", &s.grade3) != 1 ||
+        s.grade3 < 0 || s.grade3 > 100) {
+        printf("Invalid grade!\n");
+        return;
+    }
+
+    students[index] = s;
+    printf("\nStudent updated successfully!\n");
+}
+
+void deleteStudent(void) {
+    int id, index, i;
+    char confirm;
+
+    printf("\nEnter Student ID to delete: ");
+
+    if (scanf("%d", &id) != 1) {
+        printf("Invalid ID!\n");
+        return;
+    }
+
+    index = findStudent(id);
+
+    if (index == -1) {
+        printf("Student not found!\n");
+        return;
+    }
+
+    printf("Delete %s? (Y/N): ", students[index].name);
+    scanf(" %c", &confirm);
+
+    if (confirm == 'Y' || confirm == 'y') {
+        for (i = index; i < count - 1; i++) {
+            students[i] = students[i + 1];
+        }
+
+        count--;
+        printf("Student deleted successfully!\n");
+    } else {
+        printf("Deletion cancelled.\n");
+    }
+}
+
+int main(void) {
+    int choice;
+
+    do {
+        printf("\n========================================\n");
+        printf(" STUDENT INFORMATION MANAGEMENT SYSTEM\n");
+        printf("========================================\n");
+        printf("1. Add Student\n");
+        printf("2. Display All Students\n");
+        printf("3. Search Student\n");
+        printf("4. Update Student\n");
+        printf("5. Delete Student\n");
+        printf("0. Exit\n");
+        printf("----------------------------------------\n");
+        printf("Enter your choice: ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input! Please enter a number.\n");
+            return 1;
+        }
+
+        switch (choice) {
+            case 1:
+                addStudent();
+                break;
+            case 2:
+                displayStudents();
+                break;
+            case 3:
+                searchStudentRecord();
+                break;
+            case 4:
+                updateStudent();
+                break;
+            case 5:
+                deleteStudent();
+                break;
+            case 0:
+                printf("\nThank you for using the system!\n");
+                break;
+            default:
+                printf("\nInvalid choice! Please try again.\n");
+        }
+
+    } while (choice != 0);
+
+    return 0;
+}
